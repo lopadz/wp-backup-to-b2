@@ -27,12 +27,12 @@ Duplicate ```apps/app-example.mk``` and configure the settings for the app you w
 ### 3. Running The Recipe
 To run the ```backup.mk``` recipe, it requires:
    1. The **absolute path** where the makefile is located. This is helpful so that you can run it as a cron job or run it manually from anywhere.
-   2. The **```APP```** variable with the **relative path** *(relative to the ```backup.mk``` file)* of the ```app-name.mk``` file with all the configured settings of the app you want to backup.
+   2. The **```APP```** variable with the **relative path** *(relative to the ```backup.mk``` file)* of the ```app-name.mk``` file with all the configured settings of the app you want to backup. **There's no need to add the ".mk" file extension.**
    3. The **```FREQ```** variable which tells the script what kind of frequency the backup will have. See [*"App Settings & Options"*](#app-settings--options) below for more details.
    
 Here's an example of a weekly backup run:
    ```sh
-   $ make -f /root/cron/backup.mk APP=apps/app-name.mk FREQ=weekly
+   $ make -f /root/cron/backup.mk APP=apps/app-name FREQ=weekly
    ```
 
 ## File Structure
