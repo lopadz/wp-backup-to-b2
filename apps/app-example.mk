@@ -29,7 +29,7 @@ DB_PREFIX       = db
 CODE_PREFIX     = code
 # Set to true if you would like to delete old backups
 CLEANUP_OLD_BACKUPS = false
-# Number of days to look in the past to delete old backups
+# Number of days to look in the past to delete old local backups
 # Defaults to:
 # DELETE_DAILY   = 8
 # DELETE_WEEKLY  = 31

@@ -7,7 +7,7 @@
 
 1. Root access. You could do it with sudo access, but you won't be able to run this as a cron job.
 2. LAMP/LEMP stack with Bash shell installed.
-3. [WP CLI](https://wp-cli.org/): Used to export the DB and generate filenames among other actions.
+3. [WP CLI](https://wp-cli.org/) is used to export the DB and generate filenames among other actions.
 4. [Blackblaze S3](https://www.backblaze.com/b2/docs/quick_command_line.html) key and bucket(s) set up & configured to sync your files.
 
 ## Usage
@@ -21,17 +21,18 @@ The script can be called from anywhere as long as you pass the correct path to w
 
 ### 2. Configure App Settings
 Duplicate ```apps/app-example.mk``` and configure the settings for the app you want to backup and sync.
-- Rename the file to the name of your app to keep things organized.
-- Pay attention to the paths and comments. The variables are pretty self explanatory, but see "App Settings & Options" below for more details.
+1. Rename the file to the name of your app to keep things organized.
+2. Pay attention to the paths and comments. The variables are pretty self explanatory, but see [*"App Settings & Options"*](#app-settings--options) below for more details.
 
 ### 3. Running The Recipe
 To run the ```backup.mk``` recipe, it requires:
-   - The **absolute path** *(if running as a cron job)* or **relative path** *(if running manually)* where the makefile is located.
-   - The **```FREQ```** variable with a value of 'daily', 'weekly', 'monthly', or 'yearly'. If nothing is set or empty, it will default to daily.
+   1. The **absolute path** where the makefile is located. This is helpful so that you can run it as a cron job or run it manually from anywhere.
+   2. The **```APP```** variable with the **relative path** *(relative to the ```backup.mk``` file)* of the ```app-name.mk``` file with all the configured settings of the app you want to backup.
+   3. The **```FREQ```** variable which tells the script what kind of frequency the backup will have. See [*"App Settings & Options"*](#app-settings--options) below for more details.
    
 Here's an example of a weekly backup run:
    ```sh
-   $ make -f /root/cron/backup.mk FREQ=weekly
+   $ make -f /root/cron/backup.mk APP=apps/app-name.mk FREQ=weekly
    ```
 
 ## File Structure
@@ -40,18 +41,20 @@ Here's an example of a weekly backup run:
 - ```utilities.mk```: Defines colors and variables needed for naming files/directories.
 
 ## App Settings & Options
+- ```FREQ``` = It tells the script what kind of backup frequency this will be. This affects the name of the directory where the backup will be saved and the retention policy for local and remote backups. Valid values are 'daily', 'weekly', 'monthly', and 'yearly'. If nothing is set or empty, it will default to 'daily'.
 -  ```LOG_DIR``` = Name of the directory where the logs are saved.
 -  ```DB_PREFIX``` & ```CODE_PREFIX ```= Prefix added to the filename to the database and codebase respectively.
 -  ```CLEANUP_OLD_BACKUPS``` = If set to true, the script will find the backups created between now and:
-   -  7 days in the past for backups with a value of ```FREQ=daily```
+   -  8 days in the past for backups with a value of ```FREQ=daily```
    -  31 days in the past for backups with a value of ```FREQ=weekly```
    -  91 days in the past for backups with a value of ```FREQ=monthly```
    -  366 days in the past for backups with a value of ```FREQ=yearly```
 
-	Once found, it will delete them *before* syncing to the S3 bucket and have a simple retention policy. You can customize these values if needed.
+	Once found, it will **delete the local backups** *before* syncing to the S3 bucket for a simple retention policy. You can customize these values by commenting out the ```DELETE_...``` variables and updating as needed.
 
 - ```S3_SYNC``` = If set to false, this won't sync the backups to the S3 bucket. It defaults to ```true```.s
-- ```S3_KEEP...``` = These are the days that are passed in the --keepDays flag when syncing to the B2 S3 bucket.
+- ```S3_KEEP_...``` = These are the days that are passed in the --keepDays flag when syncing to the B2 S3 bucket.
+- ```DELETE_...``` vs ```S3_KEEP_...``` = The main difference is one affects local backups, while the other one affects the retention policy of the S3 bucket.
 
 ## Optional Recommendations
 Paths in the ```apps/app-example.mk``` file resemble an app running on:
