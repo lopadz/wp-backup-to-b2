@@ -189,7 +189,8 @@ cleanup:
 		echo "Cleaning old backups" >> ${LOG_FILE}; \
 		echo "${SEPARATOR}" >> ${LOG_FILE}; \
 		find ${BACKUP_FREQ_DIR} \
-			-type d -newerct "$(date -d -${KEEP_LOCAL_BACKUPS_FOR}days)" -not -newerct "$(date)" \
+			-type d -newerct "$(date -d -${KEEP_LOCAL_BACKUPS_FOR}days)" \
+			-not -newerct "$(date)" \
 			-not -name ${BACKUP_DATE} \
 			-not -wholename ${BACKUP_FREQ_DIR} \
 			-exec rm -rf {} + >> ${LOG_FILE}; \
@@ -199,4 +200,4 @@ cleanup:
 	fi
 
 test:
-	@echo "Backup Cleanup Enable: ${BACKUP_CLEANUP_ENABLE}"
+	@echo 'test';
