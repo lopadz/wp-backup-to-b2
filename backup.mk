@@ -63,30 +63,30 @@ CODEBASE_BACKUP = ${BACKUP_DIR}/${CODE_PREFIX}-${APP_NAME}-${BACKUP_TIMESTAMP}.t
 LOG_PATH  = ${MAKEFILE_PATH}/${LOG_DIR}
 LOG_FILE ?= ${LOG_PATH}/backup-${USERNAME}-${APP_NAME}-${BACKUP_TIMESTAMP}.log
 
-# Sync to S3 options
-S3_ENABLE = $(shell \
-	if [ -z ${S3_SYNC} ]; then \
+# Sync to B2 options
+B2_ENABLE = $(shell \
+	if [ -z ${B2_SYNC} ]; then \
 		echo "true"; \
-	elif [ ${S3_SYNC} = false ]; then \
+	elif [ ${B2_SYNC} = false ]; then \
 		echo "false"; \
 	else \
 		echo "true"; \
 	fi)
-S3_KEEP_DAYS = $(shell \
+B2_KEEP_DAYS = $(shell \
 	if [ ${FREQUENCY} = daily ]; then \
-		if [ ! -z ${S3_KEEP_DAILY} ]; then echo ${S3_KEEP_DAILY}; else echo "7"; fi\
+		if [ ! -z ${B2_KEEP_DAILY} ]; then echo ${B2_KEEP_DAILY}; else echo "7"; fi\
 	elif [ ${FREQUENCY} = weekly ]; then \
-		if [ ! -z ${S3_KEEP_WEEKLY} ]; then echo ${S3_KEEP_WEEKLY}; else echo "30"; fi\
+		if [ ! -z ${B2_KEEP_WEEKLY} ]; then echo ${B2_KEEP_WEEKLY}; else echo "30"; fi\
 	elif [ ${FREQUENCY} = monthly ]; then \
-		if [ ! -z ${S3_KEEP_MONTHLY} ]; then echo ${S3_KEEP_MONTHLY}; else echo "90"; fi\
+		if [ ! -z ${B2_KEEP_MONTHLY} ]; then echo ${B2_KEEP_MONTHLY}; else echo "90"; fi\
 	elif [ ${FREQUENCY} = yearly ]; then \
-		if [ ! -z ${S3_KEEP_YEARLY} ]; then echo ${S3_KEEP_YEARLY}; else echo "365"; fi\
+		if [ ! -z ${B2_KEEP_YEARLY} ]; then echo ${B2_KEEP_YEARLY}; else echo "365"; fi\
 	else \
 		echo "7"; \
 	fi)
 
 SYNC_FROM = ${BACKUP_FREQ_DIR}/
-SYNC_TO   = b2://${S3_BUCKET_PATH}/${FREQUENCY}/
+SYNC_TO   = b2://${B2_BUCKET_PATH}/${FREQUENCY}/
 
 # Local backup retention
 BACKUP_CLEANUP_ENABLE = $(shell \
@@ -114,7 +114,7 @@ KEEP_LOCAL_BACKUPS_FOR = $(shell \
 # Order of the sync steps
 #---------------------------------------------
 .PHONY: execute
-execute: setup database codebase secure s3_sync cleanup
+execute: setup database codebase secure b2_sync cleanup
 
 setup:
 	@echo "${LIGHTPURPLE}Starting Backup Setup ...${RESET_COLOR}"
@@ -166,19 +166,19 @@ secure:
 	fi
 	@echo "${GREEN}Completed ${CHECK}${RESET_COLOR}"
 
-s3_sync:
-	@if [ ${S3_ENABLE} = true ]; then \
-		echo "${LIGHTPURPLE}Syncing to S3 bucket ...${RESET_COLOR}"; \
+b2_sync:
+	@if [ ${B2_ENABLE} = true ]; then \
+		echo "${LIGHTPURPLE}Syncing to B2 bucket ...${RESET_COLOR}"; \
 		echo "${SEPARATOR}" >> ${LOG_FILE}; \
-		echo "Syncing to S3 bucket" >> ${LOG_FILE}; \
+		echo "Syncing to B2 bucket" >> ${LOG_FILE}; \
 		echo "${SEPARATOR}" >> ${LOG_FILE}; \
 		echo "FROM: ${SYNC_FROM}" >> ${LOG_FILE}; \
 		echo "TO: ${SYNC_TO}" >> ${LOG_FILE}; \
-		b2 sync --keepDays ${S3_KEEP_DAYS} --replaceNewer ${SYNC_FROM} ${SYNC_TO} >> ${LOG_FILE}; \
+		b2 sync --keepDays ${B2_KEEP_DAYS} --replaceNewer ${SYNC_FROM} ${SYNC_TO} >> ${LOG_FILE}; \
 		echo "${GREEN}Completed ${CHECK}${RESET_COLOR}"; \
 	else \
-		echo "Syncing to S3 bucket skipped!" >> ${LOG_FILE}; \
-		echo "${YELLOW}Syncing to S3 bucket skipped!${RESET_COLOR}"; \
+		echo "Syncing to B2 bucket skipped!" >> ${LOG_FILE}; \
+		echo "${YELLOW}Syncing to B2 bucket skipped!${RESET_COLOR}"; \
 	fi
 	@echo "${GREEN}BACKUP COMPLETE!${RESET_COLOR}"
 

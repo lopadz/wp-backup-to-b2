@@ -37,16 +37,16 @@ CLEANUP_OLD_BACKUPS = false
 # DELETE_YEARLY  = 366
 
 # ==================
-# S3 BUCKET OPTIONS
+# B2 BUCKET OPTIONS
 # ==================
 # Defaults to true
-# S3_SYNC = false
+# B2_SYNC = false
 # IMPORTANT: Don't add a trailing slash!
-S3_BUCKET_NAME = Bucket-Name
+B2_BUCKET_NAME = Bucket-Name
 # IMPORTANT: Don't add a trailing slash!
-S3_BUCKET_PATH = ${S3_BUCKET_NAME}/backups/${USERNAME}/${APP_NAME}
+B2_BUCKET_PATH = ${B2_BUCKET_NAME}/backups/${USERNAME}/${APP_NAME}
 # Number of days to keep backups in bucket. Defaults to 7, 30, 90, 365 respectively
-S3_KEEP_DAILY   = 7
-S3_KEEP_WEEKLY  = 30
-S3_KEEP_MONTHLY = 90
-S3_KEEP_YEARLY  = 365
+B2_KEEP_DAILY   = 7
+B2_KEEP_WEEKLY  = 30
+B2_KEEP_MONTHLY = 90
+B2_KEEP_YEARLY  = 365

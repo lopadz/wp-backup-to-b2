@@ -1,21 +1,21 @@
-# WP Backup to S3
-> WordPress Backup & Sync to Blackblaze S3 Bucket Makefile Recipe
+# WP Backup to B2
+> WordPress backup & sync to Backblaze B2 Cloud Storage Makefile recipe
 
-***This recipe is a proof-of-concept to automate backing up and uploading to a remote destination set up as a cronjob***. It will create a backup of your WP app, sync it to a Blackblaze S3 bucket, add a basic retention policy, and clean any old local backups.
+***This recipe is a proof-of-concept to automate backing up and uploading to a remote destination set up as a cronjob***. It will create a backup of your WP app, sync it to a Backblaze B2 bucket, add a basic retention policy, and clean any old local backups.
 
 ## Requirements
 
 1. Root access. You could do it with sudo access, but you won't be able to run this as a cron job.
 2. LAMP/LEMP stack with Bash shell installed.
 3. [WP CLI](https://wp-cli.org/) is used to export the DB and generate filenames among other actions.
-4. [Blackblaze S3](https://www.backblaze.com/b2/docs/quick_command_line.html) key and bucket(s) set up & configured to sync your files.
+4. [Backblaze B2](https://www.backblaze.com/b2/docs/quick_command_line.html) key and bucket(s) set up & configured to sync your files.
 
 ## Usage
 
 ### 1. Clone Repo 
 Put this in a folder like ```/root/cron/``` or ```home/user/webapps/``` if you just want to run it manually.
    ```sh
-   $ git clone https://github.com/lopadz/wp-backup-to-s3
+   $ git clone https://github.com/lopadz/wp-backup-to-b2
    ```
 The script can be called from anywhere as long as you pass the correct path to where the Makefile is located. See below for instructions.
 
@@ -37,7 +37,7 @@ Here's an example of a weekly backup run:
 
 ## File Structure
 - ```backup.mk```: Main recipe to start the backup and sync process.
-- ```apps/app-example.mk```: These are the settings *(per app)* the ```backup.mk``` recipe needs in order to create a backup and sync to a B2 S3 bucket.
+- ```apps/app-example.mk```: These are the settings *(per app)* the ```backup.mk``` recipe needs in order to create a backup and sync to a B2 bucket.
 - ```utilities.mk```: Defines colors and variables needed for naming files/directories.
 
 ## App Settings & Options
@@ -50,11 +50,11 @@ Here's an example of a weekly backup run:
    -  91 days in the past for backups with a value of ```FREQ=monthly```
    -  366 days in the past for backups with a value of ```FREQ=yearly```
 
-	Once found, it will **delete the local backups** *before* syncing to the S3 bucket for a simple retention policy. You can customize these values by commenting out the ```DELETE_...``` variables and updating as needed.
+	Once found, it will **delete the local backups** *before* syncing to the B2 bucket for a simple retention policy. You can customize these values by commenting out the ```DELETE_...``` variables and updating as needed.
 
-- ```S3_SYNC``` = If set to false, this won't sync the backups to the S3 bucket. It defaults to ```true```.s
-- ```S3_KEEP_...``` = These are the days that are passed in the --keepDays flag when syncing to the B2 S3 bucket.
-- ```DELETE_...``` vs ```S3_KEEP_...``` = The main difference is one affects local backups, while the other one affects the retention policy of the S3 bucket.
+- ```B2_SYNC``` = If set to false, this won't sync the backups to the B2 bucket. It defaults to ```true```.s
+- ```B2_KEEP_...``` = These are the days that are passed in the --keepDays flag when syncing to the B2 bucket.
+- ```DELETE_...``` vs ```B2_KEEP_...``` = The main difference is one affects local backups, while the other one affects the retention policy of the B2 bucket.
 
 ## Optional Recommendations
 Paths in the ```apps/app-example.mk``` file resemble an app running on:
